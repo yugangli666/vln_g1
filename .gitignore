@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.vscode/
+results/
+*.tar.gz
+wavedrom-2.0.3.post3/
+=64.0.0
