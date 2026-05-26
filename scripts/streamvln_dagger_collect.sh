@@ -5,18 +5,19 @@ set -x
 export MAGNUM_LOG=quiet HABITAT_SIM_LOG=quiet
 MASTER_PORT=$((RANDOM % 101 + 20000))
 
+DATA_ROOT="$HOME/Strvln_data"
 
 DAGGER_DATASET=R2R
-DAGGER_DATA_PATH=data/datasets/r2r/train/train.json.gz
-DAGGER_GT_ANNOTATIONS_PATH=data/trajectory_data/R2R_V1-3/annotations.json
+DAGGER_DATA_PATH=${DATA_ROOT}/datasets/r2r/train/train.json.gz
+DAGGER_GT_ANNOTATIONS_PATH=${DATA_ROOT}/trajectory_data/R2R_V1-3/annotations.json
 
 # DAGGER_DATASET=RxR
-# DAGGER_DATA_PATH=data/datasets/rxr/train/train_guide_en.json.gz
-# DAGGER_GT_ANNOTATIONS_PATH=data/trajectory_data/RxR_new/annotations.json
+# DAGGER_DATA_PATH=${DATA_ROOT}/datasets/rxr/train/train_guide_en.json.gz
+# DAGGER_GT_ANNOTATIONS_PATH=${DATA_ROOT}/trajectory_data/RxR_new/annotations.json
 
 # DAGGER_DATASET=EnvDrop
-# DAGGER_DATA_PATH=data/datasets/envdrop/envdrop.json.gz
-# DAGGER_GT_ANNOTATIONS_PATH=data/trajectory_data/EnvDrop/annotations.json
+# DAGGER_DATA_PATH=${DATA_ROOT}/datasets/envdrop/envdrop.json.gz
+# DAGGER_GT_ANNOTATIONS_PATH=${DATA_ROOT}/trajectory_data/EnvDrop/annotations.json
 
 
 DAGGER_UPDATE_SIZE=160000
@@ -28,7 +29,7 @@ MID_RUN_NAME="StreamVLN_Video_qwen_1_5_1epoch_196token_8history_32frame"
 CHECKPOINT="${MID_RUN_NAME}"
 echo "CHECKPOINT: ${CHECKPOINT}"
 
-DAGGER_OUTPUT_PATH=data/dagger_data/${DAGGER_DATASET}
+DAGGER_OUTPUT_PATH=${DATA_ROOT}/dagger_data/${DAGGER_DATASET}
 
 mkdir -p ${DAGGER_OUTPUT_PATH}
 

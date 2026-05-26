@@ -21,7 +21,7 @@ from habitat_extensions import measures
 
 DATASET = "rxr"
 CONFIG_PATH = "./config/vln_r2r.yaml"
-OUTPUT_PATH = f"./data/trajectory_data/{DATASET}"
+OUTPUT_PATH = f"/home/ubuntu/Strvln_data/trajectory_data/{DATASET}"
 DATA_PATH = None  # Set to None to use default dataset path
 
 class StreamVLNHabitatRunner:

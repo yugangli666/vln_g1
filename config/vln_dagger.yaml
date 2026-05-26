@@ -56,5 +56,5 @@ habitat:
   dataset:
     type: R2RVLN-v1
     split: train
-    scenes_dir: data/scene_datasets/
-    data_path: data/datasets/r2r/{split}/{split}.json.gz
+    scenes_dir: /home/ubuntu/Strvln_data/scene_datasets/
+    data_path: /home/ubuntu/Strvln_data/datasets/r2r/R2R_VLNCE_v1/{split}/{split}.json.gz

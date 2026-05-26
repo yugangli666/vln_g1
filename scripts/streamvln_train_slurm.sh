@@ -8,7 +8,8 @@ export HF_HOME=/HF/Home/
 MASTER_ADDR=`scontrol show hostname $SLURM_JOB_NODELIST | head -n1`
 MASTER_PORT=$((RANDOM % 101 + 20001))
 
-VIDEO_FOLDER="data/trajectory_data/R2R","data/trajectory_data/RxR","data/trajectory_data/EnvDrop"
+DATA_ROOT="$HOME/Strvln_data"
+VIDEO_FOLDER="${DATA_ROOT}/trajectory_data/R2R","${DATA_ROOT}/trajectory_data/RxR","${DATA_ROOT}/trajectory_data/EnvDrop"
 
 LLM_VERSION="Qwen/Qwen2-7B-Instruct"
 LLM_VERSION_CLEAN="${LLM_VERSION//\//_}"

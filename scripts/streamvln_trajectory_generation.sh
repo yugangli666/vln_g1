@@ -7,9 +7,10 @@ umask 000
 
 TIME=$(date +%Y%m%d_%H%M)
 DATASET=R2R
+DATA_ROOT="$HOME/Strvln_data"
 CONFIG_PATH=config/vln_r2r.yaml
-OUTPUT_PATH=data/trajectory_data/${DATASET}/${TIME}
-DATA_PATH=data/datasets/envdrop/envdrop.json.gz  # Set to None to use default dataset path
+OUTPUT_PATH=${DATA_ROOT}/trajectory_data/${DATASET}/${TIME}
+DATA_PATH=${DATA_ROOT}/datasets/envdrop/envdrop.json.gz  # Set to None to use default dataset path
 
 mkdir -p ${OUTPUT_PATH}
 torchrun --nproc_per_node=8 --master_port=$MASTER_PORT streamvln/streamvln_trajectory_generation.py \

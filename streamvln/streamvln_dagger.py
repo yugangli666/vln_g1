@@ -629,9 +629,9 @@ if __name__ == "__main__":
     parser.add_argument("--dagger_dataset", type=str, default=DATASET)
     parser.add_argument("--force_expert", action="store_true", default=False)
     parser.add_argument("--dagger_data_it", type=int, default=0)
-    parser.add_argument("--dagger_output_path",type=str, default="data/dagger")
-    parser.add_argument("--dagger_data_path", type=str, default="data/datasets/vln_datasets/{split}.json.gz")
-    parser.add_argument("--dagger_gt_annotations_path", type=str, default="data/datasets/vln_datasets/annotations.json")
+    parser.add_argument("--dagger_output_path",type=str, default="/home/ubuntu/Strvln_data/dagger")
+    parser.add_argument("--dagger_data_path", type=str, default="/home/ubuntu/Strvln_data/datasets/vln_datasets/{split}.json.gz")
+    parser.add_argument("--dagger_gt_annotations_path", type=str, default="/home/ubuntu/Strvln_data/datasets/vln_datasets/annotations.json")
     parser.add_argument("--dagger_save_video", action="store_true", default=False, help="whether to save video during dagger collection")
 
     parser.add_argument('--world_size', default=1, type=int,

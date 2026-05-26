@@ -8,10 +8,11 @@ export HF_HOME=/HF/Home/
 MASTER_ADDR=`scontrol show hostname $SLURM_JOB_NODELIST | head -n1`
 MASTER_PORT=$((RANDOM % 101 + 20001))
 
-VIDEO_FOLDER="data/trajectory_data/R2R","data/trajectory_data/RxR","data/dagger_data/R2R","data/dagger_data/RxR","data/dagger_data/EnvDrop"
-MMC4_VIDEO_FOLDER="data/co-training_data/MMC4-core/images"
-SCANQA_VIDEO_FOLDER="data/co-training_data/ScanNet"
-QA_VIDEO_FOLDER="data/co-training_data/LLaVA-Video-178K"
+DATA_ROOT="$HOME/Strvln_data"
+VIDEO_FOLDER="${DATA_ROOT}/trajectory_data/R2R","${DATA_ROOT}/trajectory_data/RxR","${DATA_ROOT}/dagger_data/R2R","${DATA_ROOT}/dagger_data/RxR","${DATA_ROOT}/dagger_data/EnvDrop"
+MMC4_VIDEO_FOLDER="${DATA_ROOT}/co-training_data/MMC4-core/images"
+SCANQA_VIDEO_FOLDER="${DATA_ROOT}/co-training_data/ScanNet"
+QA_VIDEO_FOLDER="${DATA_ROOT}/co-training_data/LLaVA-Video-178K"
 
 LLM_VERSION="Qwen/Qwen2-7B-Instruct"
 LLM_VERSION_CLEAN="${LLM_VERSION//\//_}"
