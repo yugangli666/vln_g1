@@ -8,13 +8,13 @@ import os
 import transformers
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from flask import Flask, request, jsonify
+import cgi
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from PIL import Image, ImageDraw, ImageFont
 from datetime import datetime
 from streamvln.streamvln_agent import VLNEvaluator
 from model.stream_video_vln import StreamVLNForCausalLM
 
-app = Flask(__name__)
 action_seq = np.zeros(4)
 idx = 0
 terminate = False
@@ -58,20 +58,18 @@ def annotate_image(idx, image, start_time, total_generate_time, llm_output, outp
 
     image.save(f'{output_dir}/rgb_{idx}_annotated.png')
 
-@app.route("/eval_vln",methods=['POST'])
-def eval_vln():
+def eval_vln(image_stream, json_data):
     global action_seq, idx, terminate, total_generate_time, output_dir, start_time
 
-    image_file = request.files['image']
-    json_data = request.form['json']
     data = json.loads(json_data)
     
-    image = Image.open(image_file.stream)
+    image = Image.open(image_stream)
     image = image.convert('RGB')
     image = np.asarray(image)[...,::-1]
 
     camera_pose = np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
-    instruction = "Walk forward and immediately stop when you exit the room."
+    # instruction = "Walk forward and immediately stop when you exit the room."
+    instruction = "Move forward for a short distance and stop."
 
     
     policy_init = data['reset']
@@ -89,7 +87,7 @@ def eval_vln():
     
     if terminate:
         print("!!!!!!!!!!!!!!!!!task finish!!!!!!!!!!!!!!!!!!!!!")
-        return jsonify({'action': [0]})
+        return {'action': [0]}
     
     for i in range(4):
         t1 = time.time()
@@ -124,14 +122,54 @@ def eval_vln():
     
     if len(action_seq) == 0:
         print("!!!!!!!!!!!!!!!!!task finish!!!!!!!!!!!!!!!!!!!!!")
-        return jsonify({'action': [0]})
+        return {'action': [0]}
     
-    return jsonify({'action': action_seq})
+    return {'action': action_seq}
+
+
+class RealWorldRequestHandler(BaseHTTPRequestHandler):
+    def _send_json(self, status_code, payload):
+        response = json.dumps(payload).encode("utf-8")
+        self.send_response(status_code)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Length", str(len(response)))
+        self.end_headers()
+        self.wfile.write(response)
+
+    def do_GET(self):
+        if self.path == "/eval_vln":
+            self._send_json(405, {"error": "Method Not Allowed. Use POST."})
+        else:
+            self._send_json(404, {"error": "Not Found"})
+
+    def do_POST(self):
+        if self.path != "/eval_vln":
+            self._send_json(404, {"error": "Not Found"})
+            return
+
+        try:
+            form = cgi.FieldStorage(
+                fp=self.rfile,
+                headers=self.headers,
+                environ={
+                    "REQUEST_METHOD": "POST",
+                    "CONTENT_TYPE": self.headers.get("Content-Type"),
+                },
+            )
+            if "image" not in form or "json" not in form:
+                self._send_json(400, {"error": "Missing image or json field"})
+                return
+
+            result = eval_vln(form["image"].file, form["json"].value)
+            self._send_json(200, result)
+        except Exception as exc:
+            print(f"server error: {exc}", flush=True)
+            self._send_json(500, {"error": str(exc)})
     
 if __name__ == '__main__':
     global local_rank
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model_path", type=str, default="/home/pjlab/yq_ws/StreamVLN/checkpoints/StreamVLN_Video_qwen_1_5_r2r_rxr_envdrop_scalevln_real_world")
+    parser.add_argument("--model_path", type=str, default="/home/ubuntu/Strvln_data/StreamVLN_Video_qwen_1_5_r2r_rxr_envdrop_scalevln")
     parser.add_argument("--num_future_steps", type=int, default=4)
     parser.add_argument("--num_frames", type=int, default=32)
     parser.add_argument("--num_history", type=int, default=8)
@@ -178,5 +216,6 @@ if __name__ == '__main__':
     
     
     evaluator.step(0, np.zeros((480, 640, 3), dtype=np.uint8), "move forward 25 cm", run_model=True)
-    app.run(host='0.0.0.0', port=
-            5801)
+    server = ThreadingHTTPServer(("0.0.0.0", 5801), RealWorldRequestHandler)
+    print("Serving /eval_vln on http://0.0.0.0:5801", flush=True)
+    server.serve_forever()
