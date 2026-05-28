@@ -65,10 +65,9 @@ def eval_vln(image_stream, json_data):
     
     image = Image.open(image_stream)
     image = image.convert('RGB')
-    image = np.asarray(image)[...,::-1]
+    image = np.asarray(image)
 
     camera_pose = np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
-    # instruction = "Walk forward and immediately stop when you exit the room."
     instruction = "Move forward for a short distance and stop."
 
     
